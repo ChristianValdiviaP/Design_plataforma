@@ -1,0 +1,44 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        nav {
+            margin-bottom: auto; 
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        h1 {
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido a la plataforma de documentos de DESIGN</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'ingresar_trabajador' %}">Trabajadores</a></li>
+            <li><a href="{% url 'proyectos_index' %}">Proyectos</a></li>
+            <li><a href="{% url 'visualizar_informacion' %}">Visualizar</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
+
+{% endblock %}
+
