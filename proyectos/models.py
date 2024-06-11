@@ -6,6 +6,6 @@ class Proyecto(models.Model):
     nombre_faena = models.CharField(max_length=200)
     trabajador = models.ForeignKey(Trabajador, on_delete=models.CASCADE)
     documentos = models.ManyToManyField(Documento)
-
+    trabajadores = models.ManyToManyField(Trabajador, related_name='proyectos')
     def __str__(self):
         return self.nombre_proyecto

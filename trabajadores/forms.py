@@ -12,8 +12,9 @@ class TrabajadorForm(forms.ModelForm):
             'cargo': forms.Select(attrs={'class': 'form-control'}),
         }
 
-class MultiDocumentoForm(forms.Form):
+class DocumentoForm(forms.Form):
     archivos = forms.FileField(widget=MultiFileInput(attrs={'class': 'form-control'}), required=True)
     fecha_emision = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=True)
     fecha_termino = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=True)
+
 

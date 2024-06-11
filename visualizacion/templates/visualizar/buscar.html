@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar Trabajador{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'seleccionar_accion' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+    <h1 class="mb-4">Visualizar Información</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="rut">Buscar Trabajador</label>
+            <input type="text" class="form-control" id="rut" name="rut" placeholder="Ingrese el RUT del trabajador" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if error %}
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}
