@@ -1,20 +1,27 @@
-from django import forms
+'''from django import forms
 from .models import Trabajador, Documento
-from .widgets import MultiFileInput
+from multiupload.fields import MultiFileField
 
 class TrabajadorForm(forms.ModelForm):
     class Meta:
         model = Trabajador
         fields = ['nombre', 'rut', 'cargo']
-        widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'rut': forms.TextInput(attrs={'class': 'form-control'}),
-            'cargo': forms.Select(attrs={'class': 'form-control'}),
-        }
 
 class DocumentoForm(forms.Form):
-    archivos = forms.FileField(widget=MultiFileInput(attrs={'class': 'form-control'}), required=True)
-    fecha_emision = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=True)
-    fecha_termino = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=True)
+    archivos = MultiFileField(min_num=1, max_num=10, max_file_size=1024*1024*5)  
+    fecha_emision = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    fecha_termino = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))'''
 
+from django import forms
+from .models import Trabajador, Documento
+
+class TrabajadorForm(forms.ModelForm):
+    class Meta:
+        model = Trabajador
+        fields = ['nombre', 'rut', 'cargo']
+
+class DocumentoForm(forms.Form):
+    archivo = forms.FileField(widget=forms.FileInput(attrs={'accept': '.pdf,.doc,.docx'}))
+    fecha_emision = forms.DateField(widget=forms.SelectDateWidget)
+    fecha_termino = forms.DateField(widget=forms.SelectDateWidget)
 

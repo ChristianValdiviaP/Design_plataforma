@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Visualizar Trabajadores{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Trabajadores y Proyectos</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre Trabajador</th>
+                <th>Cargo</th>
+                <th>Nombre Proyecto</th>
+                <th>Faena</th>
+                <th>Documentos Vencidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in trabajadores_data %}
+                <tr>
+                    <td>{{ data.nombre }}</td>
+                    <td>{{ data.cargo }}</td>
+                    <td>{{ data.nombre_proyecto }}</td>
+                    <td>{{ data.nombre_faena }}</td>
+                    <td>
+                        {% if data.documentos_vencidos %}
+                            <ul>
+                                {% for documento in data.documentos_vencidos %}
+                                    <li>
+                                        {{ documento.archivo }} (Fecha de término: {{ documento.fecha_termino }})
+                                        <form method="post" action="{% url 'eliminar_documento' documento.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <form method="post" enctype="multipart/form-data" action="{% url 'subir_documento' data.trabajador.rut %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="id_archivo">Nuevo Documento</label>
+                                    <input type="file" name="archivo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_fecha_emision">Fecha de Emisión</label>
+                                    <input type="date" name="fecha_emision" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_fecha_termino">Fecha de Término</label>
+                                    <input type="date" name="fecha_termino" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Subir</button>
+                            </form>
+                        {% else %}
+                            Ninguno
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

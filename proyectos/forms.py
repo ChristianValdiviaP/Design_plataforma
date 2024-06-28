@@ -1,14 +1,11 @@
 from django import forms
-from .models import Proyecto
+from .models import Proyecto, ProyectoTrabajadores
+from trabajadores.models import Trabajador
 
 class ProyectoForm(forms.ModelForm):
     class Meta:
         model = Proyecto
         fields = ['nombre_proyecto', 'nombre_faena']
-        widgets = {
-            'nombre_proyecto': forms.TextInput(attrs={'class': 'form-control'}),
-            'nombre_faena': forms.TextInput(attrs={'class': 'form-control'}),
-        }
 
-class RutForm(forms.Form):
-    rut = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
+class TrabajadorSearchForm(forms.Form):
+    search_query = forms.CharField(label='Buscar Trabajador', max_length=100)

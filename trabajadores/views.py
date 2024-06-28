@@ -1,93 +1,89 @@
 '''from django.shortcuts import render, redirect
-from .forms import TrabajadorForm, MultiDocumentoForm
+from django.views import View
+from .forms import TrabajadorForm, DocumentoFormSet
 from .models import Trabajador, Documento
+from django.http import JsonResponse
 
-def index(request):
-    if request.method == 'POST':
-        trabajador_form = TrabajadorForm(request.POST)
-        documento_form = MultiDocumentoForm(request.POST, request.FILES)
-        if trabajador_form.is_valid() and documento_form.is_valid():
-            trabajador = trabajador_form.save()
-            archivos = request.FILES.getlist('archivos')
-            for archivo in archivos:
-                Documento.objects.create(
-                    trabajador=trabajador,
-                    archivo=archivo,
-                    fecha_emision=documento_form.cleaned_data['fecha_emision'],
-                    fecha_termino=documento_form.cleaned_data['fecha_termino']
-                )
-            return redirect('ingresar_trabajador')
-    else:
+class TrabajadorView(View):
+    def get(self, request):
         trabajador_form = TrabajadorForm()
-        documento_form = MultiDocumentoForm()
+        documento_formset = DocumentoFormSet(queryset=Documento.objects.none())
+        return render(request, 'trabajadores/trabajador_form.html', {
+            'trabajador_form': trabajador_form,
+            'documento_formset': documento_formset,
+        })
 
-    documentos = Documento.objects.all()
-    return render(request, 'trabajadores/index.html', {
-        'trabajador_form': trabajador_form,
-        'documento_form': documento_form,
-        'documentos': documentos
-    })
+    def post(self, request):
+        trabajador_form = TrabajadorForm(request.POST)
+        documento_formset = DocumentoFormSet(request.POST, request.FILES)
 
-def eliminar_documento(request, id):
-    documento = Documento.objects.get(id=id)
-    documento.delete()
-    return redirect('ingresar_trabajador')'''
+        if trabajador_form.is_valid() and documento_formset.is_valid():
+            trabajador = trabajador_form.save()
+            documentos = documento_formset.save(commit=False)
+            for documento in documentos:
+                documento.trabajador = trabajador
+                documento.save()
+            return redirect('trabajadores')
 
-
-from django.shortcuts import render, redirect
-from .forms import TrabajadorForm, DocumentoForm
-from .models import Trabajador, Documento
-
-def index(request):
-    trabajador_form = TrabajadorForm()
-    documento_form = DocumentoForm()
-    lista_documentos = request.session.get('lista_documentos', [])
-
-    if request.method == 'POST':
-        if 'agregar' in request.POST:
-            documento_form = DocumentoForm(request.POST, request.FILES)
-            if documento_form.is_valid():
-                archivos = request.FILES.getlist('archivos')
-                fecha_emision = documento_form.cleaned_data['fecha_emision']
-                fecha_termino = documento_form.cleaned_data['fecha_termino']
-                
-                for archivo in archivos:
-                    lista_documentos.append({
-                        'archivo': archivo.name,
-                        'archivo_obj': archivo,
-                        'fecha_emision': fecha_emision,
-                        'fecha_termino': fecha_termino,
-                    })
-                
-                request.session['lista_documentos'] = lista_documentos
-                return redirect('trabajadores_index')
-
-        elif 'subir' in request.POST:
+        return render(request, 'trabajadores/trabajador_form.html', {
+            'trabajador_form': trabajador_form,
+            'documento_formset': documento_formset,
+        })
+    
+    def registrar_trabajador(request):
+        if request.method == 'POST':
             trabajador_form = TrabajadorForm(request.POST)
             if trabajador_form.is_valid():
                 trabajador = trabajador_form.save()
-                
-                for doc_data in lista_documentos:
+                archivos = request.FILES.getlist('archivo')
+                fechas_emision = request.POST.getlist('fecha_emision')
+                fechas_termino = request.POST.getlist('fecha_termino')
+
+                for i, archivo in enumerate(archivos):
                     Documento.objects.create(
                         trabajador=trabajador,
-                        archivo=doc_data['archivo_obj'],
-                        fecha_emision=doc_data['fecha_emision'],
-                        fecha_termino=doc_data['fecha_termino']
+                        archivo=archivo,
+                        fecha_emision=fechas_emision[i],
+                        fecha_termino=fechas_termino[i]
                     )
-                
-                request.session['lista_documentos'] = []
-                return redirect('trabajadores_index')
 
-    context = {
-        'trabajador_form': trabajador_form,
-        'documento_form': documento_form,
-        'lista_documentos': lista_documentos,
-    }
-    return render(request, 'trabajadores/index.html', context)
+                return redirect('home')
 
-def eliminar_documento(request, index):
-    lista_documentos = request.session.get('lista_documentos', [])
-    if 0 <= index < len(lista_documentos):
-        del lista_documentos[index]
-    request.session['lista_documentos'] = lista_documentos
-    return redirect('trabajadores_index')
+        else:
+            trabajador_form = TrabajadorForm()
+
+        return render(request, 'trabajadores/trabajador_form.html', {
+            'trabajador_form': trabajador_form
+        })'''
+
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import Trabajador, Documento
+from .forms import TrabajadorForm, DocumentoForm
+
+def registrar_trabajador(request):
+    if request.method == 'POST':
+        trabajador_form = TrabajadorForm(request.POST)
+        if trabajador_form.is_valid():
+            trabajador = trabajador_form.save()
+            archivos = request.FILES.getlist('archivo')
+            fechas_emision = request.POST.getlist('fecha_emision')
+            fechas_termino = request.POST.getlist('fecha_termino')
+
+            for i, archivo in enumerate(archivos):
+                Documento.objects.create(
+                    trabajador=trabajador,
+                    archivo=archivo,
+                    fecha_emision=fechas_emision[i],
+                    fecha_termino=fechas_termino[i]
+                )
+
+            return redirect('home')
+
+    else:
+        trabajador_form = TrabajadorForm()
+
+    return render(request, 'trabajadores/trabajador_form.html', {
+        'trabajador_form': trabajador_form
+    })

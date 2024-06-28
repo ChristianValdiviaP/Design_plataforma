@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import proyectos_index, eliminar_info
+from . import views
 
 urlpatterns = [
-    path('', proyectos_index, name='proyectos_index'),
-    path('eliminar_info/<int:index>/', eliminar_info, name='eliminar_info'),
+    path('crear/', views.crear_proyecto, name='crear_proyecto'),
+    
 ]
-

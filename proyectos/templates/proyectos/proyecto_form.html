@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Asignar Proyecto{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'home' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+    <h1 class="mb-4">Asignar Proyecto</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ proyecto_form.nombre_proyecto.label_tag }}
+                {{ proyecto_form.nombre_proyecto }}
+            </div>
+            <div class="form-group col-md-6">
+                {{ proyecto_form.nombre_faena.label_tag }}
+                {{ proyecto_form.nombre_faena }}
+            </div>
+        </div>
+
+        <h2 class="mb-4">Buscar y Asignar Trabajador</h2>
+        <div class="form-group">
+            {{ search_form.search_query.label_tag }}
+            {{ search_form.search_query }}
+            <button type="submit" name="buscar" class="btn btn-primary">Buscar</button>
+        </div>
+
+        {% if error_message %}
+            <div class="alert alert-danger mt-3">{{ error_message }}</div>
+        {% endif %}
+
+        <h2 class="mt-4">Trabajadores Seleccionados</h2>
+        <ul class="list-group mt-4">
+            {% for trabajador in trabajadores %}
+                <li class="list-group-item">
+                    {{ trabajador.rut }} - {{ trabajador.nombre }}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button type="submit" name="guardar" class="btn btn-primary mt-4">Guardar Proyecto</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Trabajador{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'home' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+    <h1 class="mb-4">Registrar Trabajador</h1>
+    <form method="post" enctype="multipart/form-data" class="mb-4">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ trabajador_form.nombre.label_tag }}
+                {{ trabajador_form.nombre }}
+            </div>
+            <div class="form-group col-md-6">
+                {{ trabajador_form.rut.label_tag }}
+                {{ trabajador_form.rut }}
+            </div>
+            <div class="form-group col-md-6">
+                {{ trabajador_form.cargo.label_tag }}
+                {{ trabajador_form.cargo }}
+            </div>
+        </div>
+        <h2 class="mb-4">Agregar Documentos</h2>
+        <div id="documentos">
+            <div class="documento">
+                <div class="form-group">
+                    <label for="archivo">Archivo</label>
+                    <input type="file" name="archivo" accept=".pdf,.doc,.docx" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="fecha_emision">Fecha de Emisión</label>
+                        <input type="date" name="fecha_emision" class="form-control">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="fecha_termino">Fecha de Término</label>
+                        <input type="date" name="fecha_termino" class="form-control">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger remove-documento">Eliminar</button>
+            </div>
+        </div>
+        <button type="button" id="add-documento" class="btn btn-primary">Agregar Otro Documento</button>
+        <button type="submit" class="btn btn-primary">Subir Datos</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('add-documento').addEventListener('click', function() {
+        var documentos = document.getElementById('documentos');
+        var newDocumento = document.querySelector('.documento').cloneNode(true);
+        newDocumento.querySelector('input[type="file"]').value = '';
+        newDocumento.querySelector('input[name="fecha_emision"]').value = '';
+        newDocumento.querySelector('input[name="fecha_termino"]').value = '';
+        newDocumento.querySelector('.remove-documento').addEventListener('click', function() {
+            this.parentNode.remove();
+        });
+        documentos.appendChild(newDocumento);
+    });
+
+    document.querySelectorAll('.remove-documento').forEach(function(button) {
+        button.addEventListener('click', function() {
+            this.parentNode.remove();
+        });
+    });
+</script>
+{% endblock %}
